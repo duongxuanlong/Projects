@@ -3,13 +3,20 @@ using System.Collections;
 
 public class MoveObjects : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-	
+	protected void FixedUpdate()
+	{
+		
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
+
+	protected void HandleMovementX(float x)
+	{
+	}
+
+	protected void HandleMovementY(float y)
+	{
+	}
+
+	protected void HandleLayers()
+	{
 	}
 }
