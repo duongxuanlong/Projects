@@ -8,11 +8,11 @@ public class MoveObjects : MonoBehaviour {
 		
 	}
 
-	protected void HandleMovementX(float x)
+	protected void HandleMovementX()
 	{
 	}
 
-	protected void HandleMovementY(float y)
+	protected void HandleMovementY()
 	{
 	}
 
