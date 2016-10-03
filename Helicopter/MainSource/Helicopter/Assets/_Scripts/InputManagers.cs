@@ -27,13 +27,19 @@ public class InputManagers : MonoBehaviour {
 
 	public void UpdateGravity()
 	{
+		#if UNITY_ANDROID
 		this.m_LowPassValue = Vector3.Lerp (this.m_LowPassValue, Input.acceleration, this.m_LowPassFilterFactor);
+		#endif
 	}
 
 	public bool IsTouching()
 	{
+		#if UNITY_ANDROID
 		if (Input.touchCount > 0)
 			return true;
 		return false;
+		#else
+		return false;
+		#endif
 	}
 }
