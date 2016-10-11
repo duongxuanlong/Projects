@@ -1,0 +1,23 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2008
+
+Project("{B06A424B-20A6-BE8B-4298-DB585967899A}") = "Helicopter_2D", "Assembly-CSharp.csproj", "{3B3A699C-C541-350D-E207-51681CB482F2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3B3A699C-C541-350D-E207-51681CB482F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B3A699C-C541-350D-E207-51681CB482F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B3A699C-C541-350D-E207-51681CB482F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B3A699C-C541-350D-E207-51681CB482F2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Assembly-CSharp.csproj
+	EndGlobalSection
+EndGlobal
