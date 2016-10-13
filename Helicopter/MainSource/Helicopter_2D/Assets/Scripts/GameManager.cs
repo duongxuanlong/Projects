@@ -23,12 +23,19 @@ public class GameManager : MonoBehaviour {
 		helicopter.GetComponent<Helicopter> ().helicopterInit ();
 	}
 
-	void Update()
-	{
-		camera.GetComponent<CameraManager> ().CameraUpdate ();
-	}
 	void FixedUpdate()
 	{
 		helicopter.GetComponent<Helicopter> ().helicopterUpdate ();
+	}
+
+	void Update()
+	{
+		
+	}
+
+
+	void LateUpdate()
+	{
+		camera.GetComponent<CameraManager> ().CameraUpdate ();
 	}
 }
