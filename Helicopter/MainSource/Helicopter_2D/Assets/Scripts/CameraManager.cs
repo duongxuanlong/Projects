@@ -18,27 +18,17 @@ public class CameraManager : MonoBehaviour {
 		helicopter = gameManager.helicopter;
 
 	}
-	
+
 	// Update is called once per frame
 	public void CameraUpdate() {
 
 
 		//currently, using this method
-		Vector3 offset = new Vector3(0, 0, transform.position.z - helicopter.transform.position.z);
-		transform.position = Vector3.Lerp (transform.position, helicopter.transform.position + offset, lerpSpeed);
-			
+
+		transform.position = Vector3.Lerp (transform.position, new Vector3(helicopter.transform.position.x, transform.position.y, transform.position.z), lerpSpeed);
+
 
 		//end here
-
-
-
-
-
-
-
-
-
-
 
 
 
