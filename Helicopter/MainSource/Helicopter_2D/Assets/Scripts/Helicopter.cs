@@ -58,13 +58,13 @@ public class Helicopter : MonoBehaviour {
 		rb2d = GetComponent<Rigidbody2D> ();
 
 		this.m_healthPoint = 1;
-		this.m_SpeedMoveMax = 5f;//67f;
+		this.m_SpeedMoveMax = 3f;//67f;
 		this.m_SpeedMoveMin = 0.5f;//20f;
-		this.m_SpeedUpMax = 5f;//250f;//150f;
+		this.m_SpeedUpMax = 3f;//250f;//150f;
 		this.m_SpeedUpMin = 0.5f;//150f;//250f;
-		this.m_AccelerometerLow = 1000f;
-		this.m_AccelerometerMedium = 2000f;
-		this.m_AccelerometerHigh = 3000f;
+		this.m_AccelerometerLow = 0.5f;//1000f;
+		this.m_AccelerometerMedium = 1f;//2000f;
+		this.m_AccelerometerHigh = 2f;//3000f;
 		this.m_AccelerometerLowRange = 0.2f;//3f;
 		this.m_AccelerometerMedium = 0.5f;//6f;
 		this.m_AccelerometerHighRange = 0.5001f;//6.001f;
@@ -167,24 +167,28 @@ public class Helicopter : MonoBehaviour {
 			accelerometer = this.m_AccelerometerHigh;
 		accelerometer *= Time.fixedDeltaTime;
 
-		this.m_SpeedMoveCurrent = this.m_AccelerometerCurrent + accelerometer;
+		this.m_SpeedMoveCurrent += accelerometer;//this.m_AccelerometerCurrent + accelerometer;
 		if (this.m_SpeedMoveCurrent >= this.m_SpeedMoveMax) {
 			this.m_SpeedMoveCurrent = this.m_SpeedMoveMax;
 		}
-		if (gameManager.inputManager.acceleration.x < 0)
-			this.m_SpeedMoveCurrent = -this.m_SpeedMoveCurrent;
+//		if (gameManager.inputManager.acceleration.x < 0)
+//			this.m_SpeedMoveCurrent = -this.m_SpeedMoveCurrent;
 
-		this.m_SpeedUpCurrent = this.m_AccelerometerCurrent + accelerometer;
+		this.m_SpeedUpCurrent += accelerometer;//this.m_AccelerometerCurrent + accelerometer;
 		if (this.m_SpeedUpCurrent >= this.m_SpeedUpMax)
 			this.m_SpeedUpCurrent = this.m_SpeedUpMax;
-		if (!gameManager.inputManager.IsTouching ())
-			this.m_SpeedUpCurrent = -this.m_SpeedUpCurrent;
+//		if (!gameManager.inputManager.IsTouching ())
+//			this.m_SpeedUpCurrent = -this.m_SpeedUpCurrent;
 
 		this.m_AccelerometerCurrent = accelerometer;
 
 		Vector2 velocity = this.rb2d.velocity;
 		velocity.x = this.m_SpeedMoveCurrent;
+		if (gameManager.inputManager.acceleration.x < 0)
+			velocity.x = 0 - this.m_SpeedMoveCurrent;
 		velocity.y = this.m_SpeedUpCurrent;
+		if (!gameManager.inputManager.IsTouching ())
+			velocity.y = (0 - this.m_SpeedUpCurrent) / 2;
 		this.rb2d.velocity = velocity;
 	}
 
@@ -194,10 +198,13 @@ public class Helicopter : MonoBehaviour {
 //			Flip ();
 //		else if (gameManager.inputManager.acceleration.y < 0 && this.m_FaceRight)
 //			Flip ();
-		if (gameManager.inputManager.acceleration.x >= 0 && !this.m_FaceRight)
+		if (gameManager.inputManager.acceleration.x >= 0 && !this.m_FaceRight) {
 			Flip ();
-		else if (gameManager.inputManager.acceleration.x < 0 && this.m_FaceRight)
+			ResetSpeed ();
+		} else if (gameManager.inputManager.acceleration.x < 0 && this.m_FaceRight) {
 			Flip ();
+			ResetSpeed ();
+		}
 	}
 
 	void Flip()
@@ -206,5 +213,11 @@ public class Helicopter : MonoBehaviour {
 		Vector2 localscale = transform.localScale;
 		localscale.x *= -1;
 		transform.localScale = localscale;
+	}
+
+	void ResetSpeed()
+	{
+		this.m_SpeedMoveCurrent = this.m_SpeedMoveMin;
+		this.m_SpeedUpCurrent = this.m_SpeedUpMin;
 	}
 }
