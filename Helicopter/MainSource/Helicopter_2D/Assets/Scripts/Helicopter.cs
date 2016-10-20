@@ -58,9 +58,9 @@ public class Helicopter : MonoBehaviour {
 		rb2d = GetComponent<Rigidbody2D> ();
 
 		this.m_healthPoint = 1;
-		this.m_SpeedMoveMax = 3f;//67f;
+		this.m_SpeedMoveMax = 2f;//67f;
 		this.m_SpeedMoveMin = 0.5f;//20f;
-		this.m_SpeedUpMax = 3f;//250f;//150f;
+		this.m_SpeedUpMax = 2f;//250f;//150f;
 		this.m_SpeedUpMin = 0.5f;//150f;//250f;
 		this.m_AccelerometerLow = 0.5f;//1000f;
 		this.m_AccelerometerMedium = 1f;//2000f;

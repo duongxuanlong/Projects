@@ -2,7 +2,7 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Helicopter.cs">
     <Files>
-      <File FileName="Assets\Scripts\Helicopter.cs" Line="191" Column="47" />
+      <File FileName="Assets\Scripts\Helicopter.cs" Line="63" Column="24" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
