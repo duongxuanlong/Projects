@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
 
@@ -11,8 +12,14 @@ public class GameManager : MonoBehaviour {
 	public InputManager inputManager;
 	public float tornadoSpeed;
 
+    public void EnableDebugPanel()
+    {
+        Canvas debugPanel = GameObject.Find("DebugCanvas").GetComponent<Canvas>();
+        debugPanel.enabled = !debugPanel.enabled;
+    }
 	void Awake()
 	{
+        Debug.Log("GameManager Awake!!!");
 		helicopter.GetComponent<Helicopter> ().gameManager = this;
 		camera.GetComponent<CameraManager> ().gameManager = this;
 		//tornado.GetComponent<Tornado> ().gameManager = this;
@@ -22,6 +29,7 @@ public class GameManager : MonoBehaviour {
 
 	void Start()
 	{
+        Debug.Log("GameManager Start!!!");
 		camera.GetComponent<CameraManager> ().CameraInit ();
 		helicopter.GetComponent<Helicopter> ().helicopterInit ();
 		tornado.GetComponent<BehindTornado> ().TornadoInit ();
@@ -43,4 +51,5 @@ public class GameManager : MonoBehaviour {
 	{
 		camera.GetComponent<CameraManager> ().CameraUpdate ();
 	}
+
 }

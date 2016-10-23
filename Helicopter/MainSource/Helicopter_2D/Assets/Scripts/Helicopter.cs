@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class Helicopter : MonoBehaviour {
@@ -54,6 +55,8 @@ public class Helicopter : MonoBehaviour {
 
 	public void helicopterInit()
 	{
+        Debug.Log("helicopterInit");
+        
 		firstTouch = false;
 		rb2d = GetComponent<Rigidbody2D> ();
 
@@ -89,9 +92,15 @@ public class Helicopter : MonoBehaviour {
 		flyDownSpeedMax = m_SpeedDownMax / gameManager.pixelPerUnit;
 		verticalAccelerometer = m_verticalAccelerometer / gameManager.pixelPerUnit;
 		capacity = m_capacity;
-		accelerationRangeMin = m_accelerationRangeMin / gameManager.pixelPerUnit;	
+		accelerationRangeMin = m_accelerationRangeMin / gameManager.pixelPerUnit;
 
-
+        if (!PlayerPrefs.HasKey("firstTime"))
+        {
+            setDefaultDebugValue();
+            PlayerPrefs.SetInt("firstTime", 1);
+        }
+        loadDebugPanel();
+        loadDebugValue();
 	}
 
 	public void helicopterUpdate()
@@ -220,4 +229,68 @@ public class Helicopter : MonoBehaviour {
 		this.m_SpeedMoveCurrent = this.m_SpeedMoveMin;
 		this.m_SpeedUpCurrent = this.m_SpeedUpMin;
 	}
+
+    public void loadDebugValue()
+    {
+        Debug.Log("loadDebugValue");
+        moveSpeedMax = PlayerPrefs.GetFloat("moveSpeedMax") / gameManager.pixelPerUnit;
+
+        moveSpeedMin = PlayerPrefs.GetFloat("moveSpeedMin") / gameManager.pixelPerUnit;
+
+        flyUpSpeedMax = PlayerPrefs.GetFloat("flyUpSpeedMax") / gameManager.pixelPerUnit;
+
+        flyDownSpeedMax = PlayerPrefs.GetFloat("flyDownSpeedMax") / gameManager.pixelPerUnit;
+
+        horizontalAccelerometer = PlayerPrefs.GetFloat("horizontalAccelerometer") / gameManager.pixelPerUnit;
+        verticalAccelerometer = PlayerPrefs.GetFloat("verticalAccelerometer") / gameManager.pixelPerUnit;
+        accelerationRangeMin = PlayerPrefs.GetFloat("accelerationRangeMin") / gameManager.pixelPerUnit;
+        Debug.Log("moveSpeedMax " + moveSpeedMax);
+        Debug.Log("moveSpeedMin " + moveSpeedMin);
+        Debug.Log("flyUpSpeedMax " + flyUpSpeedMax);
+        Debug.Log("flyDownSpeedMax " + flyDownSpeedMax);
+        Debug.Log("horizontalAccelerometer " + horizontalAccelerometer);
+        Debug.Log("verticalAccelerometer " + verticalAccelerometer);
+        Debug.Log("accelerationRangeMin " + accelerationRangeMin);
+    }
+
+    public void loadDebugPanel()
+    {
+        Debug.Log("setDefaultDebugValue");
+        GameObject.Find("SpdMoveMaxIF").GetComponent<InputField>().text =  PlayerPrefs.GetFloat("moveSpeedMax").ToString();
+        GameObject.Find("SpdMoveMinIF").GetComponent<InputField>().text = PlayerPrefs.GetFloat("moveSpeedMin").ToString();
+        GameObject.Find("FlyUpSpeedMaxIF").GetComponent<InputField>().text = PlayerPrefs.GetFloat("flyUpSpeedMax").ToString();
+        GameObject.Find("FlyUpSpeedMinIF").GetComponent<InputField>().text = PlayerPrefs.GetFloat("flyDownSpeedMax").ToString();
+        GameObject.Find("horizontalAccelerometerIF").GetComponent<InputField>().text = PlayerPrefs.GetFloat("horizontalAccelerometer").ToString();
+        GameObject.Find("verticalAccelerometerIF").GetComponent<InputField>().text = PlayerPrefs.GetFloat("verticalAccelerometer").ToString();
+        GameObject.Find("AccelerationRangeMinIF").GetComponent<InputField>().text = PlayerPrefs.GetFloat("accelerationRangeMin").ToString();
+
+    }
+    public void setDefaultDebugValue()
+    {
+        Debug.Log("setDefaultDebugValue");
+        PlayerPrefs.SetFloat("moveSpeedMax",2.0f);
+        PlayerPrefs.SetFloat("moveSpeedMin", 0.5f);
+        PlayerPrefs.SetFloat("flyUpSpeedMax", 2.0f);
+        PlayerPrefs.SetFloat("flyDownSpeedMax", 0);
+        PlayerPrefs.SetFloat("horizontalAccelerometer", 10.0f);
+        PlayerPrefs.SetFloat("verticalAccelerometer", 2200.0f);
+        PlayerPrefs.SetFloat("accelerationRangeMin", 0.2f);
+
+    }
+    public void setSpdMoveMax(uint value)
+    {
+        moveSpeedMax = value / gameManager.pixelPerUnit;
+    }
+    public void setSpdMoveMin(uint value)
+    {
+        moveSpeedMin = value / gameManager.pixelPerUnit;
+    }
+    public void setSpdFlyUpMax(uint value)
+    {
+        flyUpSpeedMax = value / gameManager.pixelPerUnit;
+    }
+    public void setSpdFlyDownMax(uint value)
+    {
+        flyDownSpeedMax = value / gameManager.pixelPerUnit;
+    }
 }
