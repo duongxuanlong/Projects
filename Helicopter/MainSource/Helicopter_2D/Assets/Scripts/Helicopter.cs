@@ -177,15 +177,16 @@ public class Helicopter : MonoBehaviour {
 		accelerometer *= Time.fixedDeltaTime;
 
 		this.m_SpeedMoveCurrent += accelerometer;//this.m_AccelerometerCurrent + accelerometer;
-		if (this.m_SpeedMoveCurrent >= this.m_SpeedMoveMax) {
-			this.m_SpeedMoveCurrent = this.m_SpeedMoveMax;
+        if (this.m_SpeedMoveCurrent >= this.moveSpeedMax)
+        {
+            this.m_SpeedMoveCurrent = this.moveSpeedMax;
 		}
 //		if (gameManager.inputManager.acceleration.x < 0)
 //			this.m_SpeedMoveCurrent = -this.m_SpeedMoveCurrent;
 
 		this.m_SpeedUpCurrent += accelerometer;//this.m_AccelerometerCurrent + accelerometer;
-		if (this.m_SpeedUpCurrent >= this.m_SpeedUpMax)
-			this.m_SpeedUpCurrent = this.m_SpeedUpMax;
+        if (this.m_SpeedUpCurrent >= this.flyUpSpeedMax)
+            this.m_SpeedUpCurrent = this.flyUpSpeedMax;
 //		if (!gameManager.inputManager.IsTouching ())
 //			this.m_SpeedUpCurrent = -this.m_SpeedUpCurrent;
 
@@ -199,6 +200,9 @@ public class Helicopter : MonoBehaviour {
 		if (!gameManager.inputManager.IsTouching ())
 			velocity.y = (0 - this.m_SpeedUpCurrent) / 2;
 		this.rb2d.velocity = velocity;
+
+        GameObject.Find("Canvas/SpdMove").GetComponent<Text>().text = "velocity.x : " + velocity.x;
+        GameObject.Find("Canvas/SpdFly").GetComponent<Text>().text = "velocity.y : " + velocity.y;
 	}
 
 	void HandleFlip()
@@ -268,9 +272,9 @@ public class Helicopter : MonoBehaviour {
     public void setDefaultDebugValue()
     {
         Debug.Log("setDefaultDebugValue");
-        PlayerPrefs.SetFloat("moveSpeedMax",2.0f);
+        PlayerPrefs.SetFloat("moveSpeedMax",200.0f);
         PlayerPrefs.SetFloat("moveSpeedMin", 0.5f);
-        PlayerPrefs.SetFloat("flyUpSpeedMax", 2.0f);
+        PlayerPrefs.SetFloat("flyUpSpeedMax", 200.0f);
         PlayerPrefs.SetFloat("flyDownSpeedMax", 0);
         PlayerPrefs.SetFloat("horizontalAccelerometer", 10.0f);
         PlayerPrefs.SetFloat("verticalAccelerometer", 2200.0f);
