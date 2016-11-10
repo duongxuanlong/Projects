@@ -2,3 +2,6 @@ sceneSetups:
 - path: Assets/Scenes/AP.unity
   isLoaded: 1
   isActive: 1
+- path: Assets/Scenes/levelDesign.unity
+  isLoaded: 1
+  isActive: 0

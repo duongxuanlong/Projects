@@ -201,8 +201,8 @@ public class Helicopter : MonoBehaviour {
 			velocity.y = (0 - this.m_SpeedUpCurrent) / 2;
 		this.rb2d.velocity = velocity;
 
-        GameObject.Find("Canvas/SpdMove").GetComponent<Text>().text = "velocity.x : " + velocity.x;
-        GameObject.Find("Canvas/SpdFly").GetComponent<Text>().text = "velocity.y : " + velocity.y;
+		GameObject.Find("DebugCanvas/SpdMove").GetComponent<Text>().text = "velocity.x : " + velocity.x;
+		GameObject.Find("DebugCanvas/SpdFly").GetComponent<Text>().text = "velocity.y : " + velocity.y;
 	}
 
 	void HandleFlip()

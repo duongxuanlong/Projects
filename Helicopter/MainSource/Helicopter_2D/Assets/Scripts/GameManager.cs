@@ -11,20 +11,17 @@ public class GameManager : MonoBehaviour {
 	public GameObject tornado;
 	public InputManager inputManager;
 	public float tornadoSpeed;
+	public Sprite pauseResumeButton;
+	private bool firstTouch;
 
-    public void EnableDebugPanel()
-    {
-        Canvas debugPanel = GameObject.Find("DebugCanvas").GetComponent<Canvas>();
-        debugPanel.enabled = !debugPanel.enabled;
-    }
 	void Awake()
 	{
         Debug.Log("GameManager Awake!!!");
 		helicopter.GetComponent<Helicopter> ().gameManager = this;
 		camera.GetComponent<CameraManager> ().gameManager = this;
-		//tornado.GetComponent<Tornado> ().gameManager = this;
 		tornado.GetComponent<BehindTornado>().gameManager = this;
 		inputManager = new InputManager ();
+		firstTouch = false;
 	}
 
 	void Start()
@@ -37,13 +34,18 @@ public class GameManager : MonoBehaviour {
 
 	void FixedUpdate()
 	{
-		helicopter.GetComponent<Helicopter> ().helicopterUpdate ();
-		tornado.GetComponent<BehindTornado> ().tornadoUpdate ();
+		if (firstTouch) {
+			helicopter.GetComponent<Helicopter> ().helicopterUpdate ();
+			tornado.GetComponent<BehindTornado> ().tornadoUpdate ();	
+		}
+
 	}
 
 	void Update()
 	{
-		
+		if (!firstTouch) {
+			firstTouch = inputManager.IsTouching ();
+		}
 	}
 
 
@@ -52,4 +54,49 @@ public class GameManager : MonoBehaviour {
 		camera.GetComponent<CameraManager> ().CameraUpdate ();
 	}
 
+
+
+
+	public void Restart()
+	{
+		SaveDebugValues();
+		Application.LoadLevel ("AP");
+	}
+	public void PauseResume()
+	{
+		GameObject debugPanel = GameObject.Find ("DebugCanvas/DebugPanel").gameObject;
+		GameObject pauseResumeGameObject = GameObject.Find ("DebugCanvas/PauseResume").gameObject;
+		Sprite tmpPauseResumeSprite = pauseResumeGameObject.GetComponent<Image> ().sprite;
+		pauseResumeGameObject.GetComponent<Image> ().sprite = pauseResumeButton;
+		pauseResumeButton = tmpPauseResumeSprite;
+		if (debugPanel.GetComponent<RectTransform> ().localScale == Vector3.zero) {
+			debugPanel.GetComponent<RectTransform> ().localScale = Vector3.one;
+
+			Time.timeScale = 0;
+		} else {
+			debugPanel.GetComponent<RectTransform> ().localScale = Vector3.zero;
+			Time.timeScale = 1;
+		}
+
+	}
+
+	void SaveDebugValues()
+	{
+		float value = float.Parse(GameObject.Find("SpdMoveMaxIF").GetComponent<InputField>().text);
+		PlayerPrefs.SetFloat("moveSpeedMax", value);
+		value = float.Parse(GameObject.Find("SpdMoveMinIF").GetComponent<InputField>().text);
+		PlayerPrefs.SetFloat("moveSpeedMin", value);
+		value = float.Parse(GameObject.Find("FlyUpSpeedMaxIF").GetComponent<InputField>().text);
+		PlayerPrefs.SetFloat("flyUpSpeedMax", value);
+		value = float.Parse(GameObject.Find("FlyUpSpeedMinIF").GetComponent<InputField>().text);
+		PlayerPrefs.SetFloat("flyDownSpeedMax", value);
+
+		value = float.Parse(GameObject.Find("horizontalAccelerometerIF").GetComponent<InputField>().text);
+		PlayerPrefs.SetFloat("horizontalAccelerometer", value);
+		value = float.Parse(GameObject.Find("verticalAccelerometerIF").GetComponent<InputField>().text);
+		PlayerPrefs.SetFloat("verticalAccelerometer", value);
+		value = float.Parse(GameObject.Find("AccelerationRangeMinIF").GetComponent<InputField>().text);
+		PlayerPrefs.SetFloat("accelerationRangeMin", value);
+
+	}
 }
