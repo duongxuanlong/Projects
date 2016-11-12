@@ -32,10 +32,12 @@ public class GameManager : MonoBehaviour {
 		tornado.GetComponent<BehindTornado> ().TornadoInit ();
 	}
 
+
+
 	void FixedUpdate()
 	{
 		if (firstTouch) {
-			helicopter.GetComponent<Helicopter> ().helicopterUpdate ();
+			helicopter.GetComponent<Helicopter> ().helicopterFixedUpdate ();
 			tornado.GetComponent<BehindTornado> ().tornadoUpdate ();	
 		}
 
@@ -46,6 +48,7 @@ public class GameManager : MonoBehaviour {
 		if (!firstTouch) {
 			firstTouch = inputManager.IsTouching ();
 		}
+		helicopter.GetComponent<Helicopter> ().helicopterUpdate ();
 	}
 
 
