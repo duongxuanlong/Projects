@@ -3,20 +3,18 @@ using UnityEngine.UI;
 using System.Collections;
 
 public class Helicopter : MonoBehaviour {
-
-
-
 	//Helicopter profile
 	public bool faceRight; //handle flip left or right
 	public float healthPoint;
 	public int capacity;
 	public float moveSpeedMax;
 	public float moveSpeedMin;
+	private float currentMoveSpeed;
 	public float horizontalAccelerometer;
 	public float flyUpSpeedMax;
 	public float flyDownSpeedMax;
+	private float currentFlySpeed;
 	public float verticalAccelerometer;
-
 	//end helicopter profile
 
 	//Customize accelerometer
@@ -28,8 +26,6 @@ public class Helicopter : MonoBehaviour {
 	public float accelerometerMediumRange;
 	public float accelerometerHighRange;
 	//end customize
-
-
 
 
 	public GameManager gameManager { get; set;}
@@ -45,50 +41,28 @@ public class Helicopter : MonoBehaviour {
 
 	public void helicopterInit()
 	{
-        Debug.Log("helicopterInit");
-
 		rb2d = GetComponent<Rigidbody2D> ();
-
-		//this.m_healthPoint = 1;
-		//this.m_moveSpeedMax = 2f;//67f;
-		//this.m_moveSpeedMin = 0.5f;//20f;
-		//this.m_flyUpSpeedMax = 2f;//250f;//150f;
-		//this.m_SpeedUpMin = 0.5f;//150f;//250f;
-		//this.m_AccelerometerLow = 0.5f;//1000f;
-		//this.m_AccelerometerMedium = 1f;//2000f;
-		//this.m_AccelerometerHigh = 2f;//3000f;
-		//this.m_AccelerometerLowRange = 0.2f;//3f;
-		//this.m_AccelerometerMedium = 0.5f;//6f;
-		//this.m_AccelerometerHighRange = 0.5001f;//6.001f;
-
-		//this.m_horizontalAccelerometer = 10f;
-
-		//this.m_capacity = 3;
-
-		this.horizontalSpeedCurrent = this.moveSpeedMin;
-
-//		this.m_SpeedToClinic = 0.3f;
-//		this.RangeLeft = 0.3f;
-//		this.RangeRight = -0.3f
-
-
+		if (PlayerPrefs.GetInt ("firstLaunch") == 1) {
+			gameManager.debugPanel.GetComponent<DebugPanel> ().LoadSavedProfile ();
+		} else {
+			gameManager.debugPanel.GetComponent<DebugPanel> ().SaveDefaultValues ();
+			PlayerPrefs.SetInt ("firstLaunch", 1);
+		}
 	}
 
 	public void helicopterUpdate()
 	{
+		// FPS udpate
 
-		gameManager.inputManager.UpdateAcceleration ();
 	}
 
 	public void helicopterFixedUpdate()
 	{
-		
-
+		//fixed update 0.02s each
 		HandleFlip ();
 		HandleMovement ();
 				
 	}
-
 
 	void HandleMovement()
 	{
@@ -96,41 +70,50 @@ public class Helicopter : MonoBehaviour {
 
 		//if use in fixed update, use fixedDeltaTime
 		//if use in update, use deltaTime
-		float accelerometer = 0f;
+		float accelerometer = 1f;
+		//accelerometer = this.m_horizontalAccelerometer;
 
 		//Debug.Log ("Y axis: " + yaxis);
-
-
+		if (xaxis > accelerometerHighRange)
+			accelerometer = accelerometerHighMultiple * horizontalAccelerometer;
+		else if (xaxis > accelerometerMediumRange)
+			accelerometer = accelerometerMediumMultiple * horizontalAccelerometer;
+		else if (xaxis > accelerometerLowRange)
+			accelerometer = accelerometerLowMultiple * horizontalAccelerometer;
 		
-		if (xaxis > accelerometerHighRange) {
-			accelerometer = this.accelerometerHighMultiple;
-		} else if (xaxis > accelerometerMediumRange) {
-			accelerometer = this.accelerometerMediumMultiple;
-		} else if (xaxis > accelerometerLowRange) {
-			accelerometer = this.accelerometerLowMultiple;
-		} 
 
-		accelerometer *= Mathf.Sign (gameManager.inputManager.acceleration.x) * horizontalAccelerometer;
-		this.horizontalSpeedCurrent += accelerometer * Time.fixedDeltaTime;//this.accelerometerCurrent + accelerometer;
-		if (this.horizontalSpeedCurrent >= this.moveSpeedMax) {
-			this.horizontalSpeedCurrent = this.moveSpeedMax;
+		currentMoveSpeed += accelerometer * Time.fixedDeltaTime;//this.m_AccelerometerCurrent + accelerometer;
+
+		if (currentMoveSpeed >= moveSpeedMax)
+		{
+			currentMoveSpeed = moveSpeedMax;
+		}
+		if (gameManager.inputManager.IsTouching()) {
+			currentFlySpeed += verticalAccelerometer * Time.fixedDeltaTime;
+		} else {
+			currentFlySpeed -= verticalAccelerometer * Time.fixedDeltaTime;
 		}
 
-		this.verticalSpeedCurrent += verticalAccelerometer;//this.accelerometerCurrent + accelerometer;
-        if (this.verticalSpeedCurrent >= this.flyUpSpeedMax)
-            this.verticalSpeedCurrent = this.flyUpSpeedMax;
-//		if (!gameManager.inputManager.IsTouching ())
-//			this.verticalSpeedCurrent = -this.verticalSpeedCurrent;
 
-		this.accelerometerCurrent = accelerometer;
 
 		Vector2 velocity = this.rb2d.velocity;
-		velocity.x = this.horizontalSpeedCurrent;
+		if (gameManager.inputManager.acceleration.x > accelerometerLowRange) {
+			velocity.x = currentMoveSpeed;
+		} else if (gameManager.inputManager.acceleration.x < -accelerometerLowRange){
+			velocity.x = -currentMoveSpeed;
+		}
+			
+		if (currentFlySpeed >= flyUpSpeedMax) {
+			currentFlySpeed = flyUpSpeedMax;
+		} else if (currentFlySpeed <= -flyDownSpeedMax) {
+			currentFlySpeed = -flyDownSpeedMax;
+		}
+			
 
-		velocity.y = this.verticalSpeedCurrent;
-			if (!gameManager.inputManager.IsTouching ())
-				velocity.y = (0 - this.verticalSpeedCurrent) / 2;
-		this.rb2d.velocity = velocity;
+
+		velocity.y = currentFlySpeed;
+
+		rb2d.velocity = velocity;
 
 		GameObject.Find("DebugCanvas/SpdMove").GetComponent<Text>().text = "velocity.x : " + velocity.x;
 		GameObject.Find("DebugCanvas/SpdFly").GetComponent<Text>().text = "velocity.y : " + velocity.y;
@@ -138,10 +121,13 @@ public class Helicopter : MonoBehaviour {
 
 	void HandleFlip()
 	{
-		if (rb2d.velocity.x >= 0 && !this.faceRight) {
+
+		if (gameManager.inputManager.acceleration.x >= accelerometerLowRange && !this.faceRight) {
 			Flip ();
-		} else if (rb2d.velocity.x < 0 && this.faceRight) {
+			ResetSpeed ();
+		} else if (gameManager.inputManager.acceleration.x < -accelerometerLowRange && this.faceRight) {
 			Flip ();
+			ResetSpeed ();
 		}
 	}
 
@@ -153,38 +139,15 @@ public class Helicopter : MonoBehaviour {
 		transform.localScale = localscale;
 	}
 
+	void ResetSpeed()
+	{
+		currentMoveSpeed = moveSpeedMin;
+	}
 
-
-    public void loadDebugValue()
-    {
-        Debug.Log("loadDebugValue");
-        moveSpeedMax = PlayerPrefs.GetFloat("moveSpeedMax") / gameManager.pixelPerUnit;
-
-        moveSpeedMin = PlayerPrefs.GetFloat("moveSpeedMin") / gameManager.pixelPerUnit;
-
-        flyUpSpeedMax = PlayerPrefs.GetFloat("flyUpSpeedMax") / gameManager.pixelPerUnit;
-
-        flyDownSpeedMax = PlayerPrefs.GetFloat("flyDownSpeedMax") / gameManager.pixelPerUnit;
-
-
-
-    }
-
-    public void loadDebugPanel()
-    {
-        Debug.Log("setDefaultDebugValue");
-        GameObject.Find("SpdMoveMaxIF").GetComponent<InputField>().text =  PlayerPrefs.GetFloat("moveSpeedMax").ToString();
-
-
-
-    }
-    public void setDefaultDebugValue()
-    {
-        Debug.Log("setDefaultDebugValue");
-        PlayerPrefs.SetFloat("moveSpeedMax",200.0f);
-
-
-
-    }
-
+	void OnTriggerEnter2D(Collider2D other)
+	{
+		if (other.tag == "Victims") {
+			Destroy (other);
+		}
+	}
 }
